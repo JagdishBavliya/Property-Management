@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Report Export</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 32px 32px 48px 32px; font-size: 11px; color: #222; background: #f8fafc; }
+    .header { background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0; font-size: 1.5em; font-weight: bold; letter-spacing: 1px; margin-bottom: 0; box-shadow: 0 2px 8px #0001; }
+    .table-container { background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 2px 8px #0001; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; table-layout: auto; word-break: break-word; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-size: 11px; }
+    th { background: #f1f5f9; color: #6366f1; font-weight: bold; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    tr:hover td { background: #e0e7ef; }
+    td { max-width: 180px; overflow-wrap: break-word; }
+    .status-cell { font-weight: bold; border-radius: 4px; padding: 6px 10px; color: #fff; background: #64748b; }
+    .status-Completed, .status-converted, .status-Approved { background: #22c55e !important; }
+    .status-Rejected, .status-rejected, .status-Expired { background: #ef4444 !important; }
+    .status-Pending, .status-Draft { background: #f59e0b !important; }
+    .status-Interested, .status-Sent { background: #3b82f6 !important; }
+    .status-Follow-Up { background: #6366f1 !important; }
+    .footer { font-size: 10px; color: #888; text-align: right; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="header">Report Export</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <% headers.forEach(header => { %>
+            <th><%= header %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (data.length === 0) { %>
+          <tr><td colspan="<%= headers.length %>" style="text-align:center; color:#888;">No data available for the selected filters.</td></tr>
+        <% } else { %>
+          <% data.forEach(row => { %>
+            <tr>
+              <% Object.values(row).forEach((cell, idx) => { %>
+                <% if (headers[idx] && headers[idx].toLowerCase().includes('status')) { %>
+                  <td class="status-cell status-<%= cell || '-' %>"><%= cell || ' - ' %></td>
+                <% } else { %>
+                  <td><%= cell || ' - ' %></td>
+                <% } %>
+              <% }) %>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">Exported on <%= new Date().toLocaleString('en-IN') %></div>
+</body>
+</html> 

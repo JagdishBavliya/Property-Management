@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Properties Export</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 32px 32px 48px 32px; font-size: 11px; color: #222; background: #f8fafc; }
+    .header { background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0; font-size: 1.5em; font-weight: bold; letter-spacing: 1px; margin-bottom: 0; box-shadow: 0 2px 8px #0001; }
+    .table-container { background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 2px 8px #0001; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; table-layout: auto; word-break: break-word; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-size: 11px; }
+    th { background: #f1f5f9; color: #0ea5e9; font-weight: bold; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    tr:hover td { background: #e0e7ef; }
+    td { max-width: 150px; overflow-wrap: break-word; }
+    .deal-amount { background: #e0f2fe !important; color: #0369a1; font-weight: bold; }
+    .footer { font-size: 10px; color: #888; text-align: right; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="header">Properties Export</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Property Code</th>
+          <th>Property Name</th>
+          <th>Area</th>
+          <th>City</th>
+          <th>Property Type</th>
+          <th>Number Of Units</th>
+          <th>Property Size</th>
+          <th>Property Rate</th>
+          <th>Seller Name</th>
+          <th>Seller Mobile</th>
+          <th>Buyer Name</th>
+          <th>Buyer Mobile</th>
+          <th>Seller Brokerage Type</th>
+          <th>Seller Brokerage Value</th>
+          <th>Buyer Brokerage Type</th>
+          <th>Buyer Brokerage Value</th>
+          <th class="deal-amount">Full Deal Amount</th>
+          <th>Agent Code</th>
+          <th>Video Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% properties.forEach(property => { %>
+          <tr>
+            <td><%= property.id || ' - ' %></td>
+            <td><%= property.property_code || ' - ' %></td>
+            <td><%= property.property_name || ' - ' %></td>
+            <td><%= property.area || ' - ' %></td>
+            <td><%= property.city || ' - ' %></td>
+            <td><%= property.property_type || ' - ' %></td>
+            <td><%= property.number_of_units || ' - ' %></td>
+            <td><%= property.property_size || ' - ' %></td>
+            <td><%= property.property_rate || ' - ' %></td>
+            <td><%= property.seller_name || ' - ' %></td>
+            <td><%= property.seller_mobile || ' - ' %></td>
+            <td><%= property.buyer_name || ' - ' %></td>
+            <td><%= property.buyer_mobile || ' - ' %></td>
+            <td><%= property.seller_brokerage_type || ' - ' %></td>
+            <td><%= property.seller_brokerage_value || ' - ' %></td>
+            <td><%= property.buyer_brokerage_type || ' - ' %></td>
+            <td><%= property.buyer_brokerage_value || ' - ' %></td>
+            <td class="deal-amount"><%= property.full_deal_amount || ' - ' %></td>
+            <td><%= property.agent_code || ' - ' %></td>
+            <td><%= property.video_link || ' - ' %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">Exported on <%= new Date().toLocaleString('en-IN') %></div>
+</body>
+</html>
