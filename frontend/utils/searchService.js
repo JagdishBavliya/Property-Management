@@ -142,7 +142,7 @@ class SearchService {
     const cached = this.getCachedResults(cacheKey);
     if (cached) return cached;
     try {
-      const params = new URLSearchParams({ page: '1', per_page: limit.toString(), search: query, role: 'Super Admin,Admin'});
+      const params = new URLSearchParams({ page: '1', per_page: limit.toString(), search: query, role: 'Admin'});
       const response = await axiosInstance.get(`/api/users?${params}`);
       const result = response.data.users || [];
       this.setCachedResults(cacheKey, result);
