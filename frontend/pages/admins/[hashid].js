@@ -11,23 +11,21 @@ import Loader from '../../components/ui/Loader';
 import UserAvatar from '../../components/ui/UserAvatar';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 
-import { fetchUsers, selectUsers, selectUsersLoading, selectUsersError } from '../../store/slices/usersSlice';
+import { getUser, selectUser, selectUserLoading, selectUserError } from '../../store/slices/usersSlice';
 import { UserIcon, EnvelopeIcon, PhoneIcon, UserGroupIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 
 export default function AdminDetailPage() {
   const router = useRouter();
   const { hashid } = router.query;
   const dispatch = useDispatch();
-  const users = useSelector(selectUsers);
-  const loading = useSelector(selectUsersLoading);
-  const error = useSelector(selectUsersError);
+  const user = useSelector(selectUser);
+  const loading = useSelector(selectUserLoading);
+  const error = useSelector(selectUserError);
 
   const hashids = new Hashids('your-salt-string', 6);
   const id = hashids.decode(hashid)[0];
-  useEffect(() => {
-    if (!users.length) dispatch(fetchUsers({ role: 'Admin' }));
-  }, [dispatch, users.length]);
-  const admin = users.find(u => String(u.id) === String(id));
+  useEffect(() => { if (id && !user) dispatch(getUser(id)); }, [dispatch, id, user]);
+  const admin = user;
 
   return (
     <>
@@ -55,27 +53,27 @@ export default function AdminDetailPage() {
           {/* Left: Avatar & Basic Info */}
           <div className="xl:col-span-1">
             <Card className="flex flex-col items-center justify-center bg-gradient-to-br from-primary-50 via-white to-primary-100 p-8 border border-gray-100 shadow-soft">
-            <UserAvatar user={admin} size="xl" className="mb-4" />
-            <div className="text-xl font-bold text-gray-900 mb-1">{admin?.name}</div>
-            <Badge variant="primary" size="md" className="mb-2">Admin</Badge>
-            <div className="flex items-center gap-2 text-gray-500 mt-2">
-              <EnvelopeIcon className="h-5 w-5" />
-              <span>{admin?.email}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500 mt-1">
-              <PhoneIcon className="h-5 w-5" />
-              <span>{admin?.phone}</span>
-            </div>
-            <div className="mt-4">
-              <Badge variant="secondary" size="sm">
-                <UserGroupIcon className="w-3 h-3 mr-1" />
-                {admin?.user_code}
-              </Badge>
-            </div>
-          </Card>
+              <UserAvatar user={admin} size="xl" className="mb-4" />
+              <div className="text-xl font-bold text-gray-900 mb-1">{admin?.name}</div>
+              <Badge variant="primary" size="md" className="mb-2">Admin</Badge>
+              <div className="flex items-center gap-2 text-gray-500 mt-2">
+                <EnvelopeIcon className="h-5 w-5" />
+                <span>{admin?.email}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-500 mt-1">
+                <PhoneIcon className="h-5 w-5" />
+                <span>{admin?.phone}</span>
+              </div>
+              <div className="mt-4">
+                <Badge variant="secondary" size="sm">
+                  <UserGroupIcon className="w-3 h-3 mr-1" />
+                  {admin?.user_code}
+                </Badge>
+              </div>
+            </Card>
           </div>
 
-                    {/* Middle: Details */}
+          {/* Middle: Details */}
           <div className="xl:col-span-3">
             <Card className="p-0 overflow-hidden">
               {loading ? (
@@ -88,57 +86,57 @@ export default function AdminDetailPage() {
                 <div className="text-gray-500 text-center py-8">Admin not found.</div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 p-8">
-              {/* Left column: Role/Code */}
-              <div className="space-y-8">
-                {/* Email Section */}
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <EnvelopeIcon className="w-4 h-4 text-emerald-600" />
+                  {/* Left column: Role/Code */}
+                  <div className="space-y-8">
+                    {/* Email Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 bg-emerald-100 rounded-full flex items-center justify-center">
+                          <EnvelopeIcon className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <span className="text-base font-bold text-gray-600">Email</span>
+                      </div>
+                      <div className="ml-9">
+                        <div className="text-xs text-gray-500 mb-1">Address</div>
+                        <div className="text-base font-semibold text-gray-800">{admin?.email || 'N/A'}</div>
+                      </div>
                     </div>
-                    <span className="text-base font-bold text-gray-600">Email</span>
+                    {/* Phone Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 bg-teal-100 rounded-full flex items-center justify-center">
+                          <PhoneIcon className="w-4 h-4 text-teal-600" />
+                        </div>
+                        <span className="text-base font-bold text-gray-600">Phone</span>
+                      </div>
+                      <div className="ml-9">
+                        <div className="text-xs text-gray-500 mb-1">Number</div>
+                        <div className="text-base font-semibold text-gray-800">{admin?.phone || 'N/A'}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="ml-9">
-                    <div className="text-xs text-gray-500 mb-1">Address</div>
-                    <div className="text-base font-semibold text-gray-800">{admin?.email || 'N/A'}</div>
+                  {/* Right column: Email/Phone */}
+                  <div className="space-y-8">
+                    {/* Code Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center">
+                          <ClipboardDocumentListIcon className="w-4 h-4 text-purple-600" />
+                        </div>
+                        <span className="text-base font-bold text-gray-600">Code</span>
+                      </div>
+                      <div className="ml-9">
+                        <div className="text-xs text-gray-500 mb-1">Admin Code</div>
+                        <Badge variant="primary" size="sm" className="mb-2">
+                          <ClipboardDocumentListIcon className="w-3 h-3 mr-1" />
+                          {admin?.user_code || 'N/A'}
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {/* Phone Section */}
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 bg-teal-100 rounded-full flex items-center justify-center">
-                      <PhoneIcon className="w-4 h-4 text-teal-600" />
-                    </div>
-                    <span className="text-base font-bold text-gray-600">Phone</span>
-                  </div>
-                  <div className="ml-9">
-                    <div className="text-xs text-gray-500 mb-1">Number</div>
-                    <div className="text-base font-semibold text-gray-800">{admin?.phone || 'N/A'}</div>
-                  </div>
-                </div>
-              </div>
-              {/* Right column: Email/Phone */}
-              <div className="space-y-8">
-                {/* Code Section */}
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ClipboardDocumentListIcon className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <span className="text-base font-bold text-gray-600">Code</span>
-                  </div>
-                  <div className="ml-9">
-                    <div className="text-xs text-gray-500 mb-1">Admin Code</div>
-                    <Badge variant="primary" size="sm" className="mb-2">
-                      <ClipboardDocumentListIcon className="w-3 h-3 mr-1" />
-                      {admin?.user_code || 'N/A'}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
-                )}
-          </Card>
+              )}
+            </Card>
           </div>
 
           {/* Right: Dummy Widgets Section */}

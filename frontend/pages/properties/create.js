@@ -267,18 +267,18 @@ export default function CreateProperty() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Property Information */}
             <Card variant="elevated">
               <div className="p-6">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
                     <BuildingOfficeIcon className="h-4 w-4 text-primary-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Input
                       label="Property Name"
@@ -289,6 +289,7 @@ export default function CreateProperty() {
                       error={errors.property_name?.message}
                       leftIcon={BuildingOfficeIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -302,6 +303,7 @@ export default function CreateProperty() {
                       error={errors.city?.message}
                       leftIcon={MapPinIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -337,6 +339,7 @@ export default function CreateProperty() {
                       })}
                       error={errors.area?.message}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -350,6 +353,7 @@ export default function CreateProperty() {
                       {...numericInputProps.decimal({ decimalPlaces: 2 })}
                       error={errors.property_size?.message}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -363,6 +367,7 @@ export default function CreateProperty() {
                       {...numericInputProps.digits()}
                       error={errors.number_of_units?.message}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -377,6 +382,7 @@ export default function CreateProperty() {
                       error={errors.property_rate?.message}
                       leftIcon={CurrencyDollarIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -391,6 +397,7 @@ export default function CreateProperty() {
                       error={errors.full_deal_amount?.message}
                       leftIcon={CurrencyDollarIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                 </div>
@@ -400,14 +407,14 @@ export default function CreateProperty() {
             {/* Seller Information */}
             <Card variant="elevated">
               <div className="p-6">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center">
                     <UserIcon className="h-4 w-4 text-success-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900">Seller Information</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Input
                       label="Seller Name"
@@ -418,6 +425,7 @@ export default function CreateProperty() {
                       error={errors.seller_name?.message}
                       leftIcon={UserIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -427,15 +435,13 @@ export default function CreateProperty() {
                       placeholder="Enter seller mobile"
                       {...register('seller_mobile', { 
                         required: 'Seller mobile is required',
-                        pattern: {
-                          value: /^[0-9]{10}$/,
-                          message: 'Please enter a valid 10-digit mobile number'
-                        }
+                        pattern: { value: /^[0-9]{10}$/, message: 'Please enter a valid 10-digit mobile number' }
                       })}
                       {...numericInputProps.digits({ maxLength: 10 })}
                       error={errors.seller_mobile?.message}
                       leftIcon={PhoneIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -472,6 +478,7 @@ export default function CreateProperty() {
                       error={errors.seller_brokerage_value?.message}
                       leftIcon={CurrencyDollarIcon}
                       required={true}
+                      className="py-2.5"
                     />
                   </div>
                 </div>
@@ -481,7 +488,7 @@ export default function CreateProperty() {
             {/* Buyer Information */}
             <Card variant="elevated">
               <div className="p-6">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-warning-100 rounded-lg flex items-center justify-center">
                     <UserIcon className="h-4 w-4 text-warning-600" />
                   </div>
@@ -489,13 +496,14 @@ export default function CreateProperty() {
                   <span className="text-sm text-gray-500">(Optional - Leave blank if property is available)</span>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Input
                       label="Buyer Name"
                       placeholder="Enter buyer name"
                       {...register('buyer_name')}
                       leftIcon={UserIcon}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -512,6 +520,7 @@ export default function CreateProperty() {
                       {...numericInputProps.digits({ maxLength: 10 })}
                       error={errors.buyer_mobile?.message}
                       leftIcon={PhoneIcon}
+                      className="py-2.5"
                     />
                   </div>
                   
@@ -544,6 +553,7 @@ export default function CreateProperty() {
                       {...register('buyer_brokerage_value')}
                       {...numericInputProps.decimal({ decimalPlaces: 2 })}
                       leftIcon={CurrencyDollarIcon}
+                      className="py-2.5"
                     />
                   </div>
                 </div>
@@ -582,14 +592,14 @@ export default function CreateProperty() {
             {/* Additional Information */}
             <Card variant="elevated">
               <div className="p-6">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-secondary-100 rounded-lg flex items-center justify-center">
                     <DocumentIcon className="h-4 w-4 text-secondary-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900">Additional Information</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Agent
@@ -598,7 +608,7 @@ export default function CreateProperty() {
                       {...register('agent_code', { 
                         required: 'Agent is required' 
                       })}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-500/30 focus:border-primary-500 text-sm sm:text-base transition-all duration-300 bg-white hover:border-gray-300 shadow-soft focus:shadow-medium"
                       disabled={allAgentsLoading || allAgents.length === 0}
                     >
                       {allAgentsLoading ? (
@@ -632,6 +642,7 @@ export default function CreateProperty() {
                       placeholder="Enter video link (optional)"
                       {...register('video_link')}
                       leftIcon={VideoCameraIcon}
+                      className="py-2.5"
                     />
                   </div>
                   

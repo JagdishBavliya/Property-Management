@@ -2,7 +2,6 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 const RolePermissionService = require('../services/RolePermissionService');
-const { v4: uuidv4 } = require('uuid');
 const { uniqueCode } = require('./ApiController');
 const fs = require('fs');
 const path = require('path');
@@ -206,10 +205,6 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-function generateManagerCode() {
-  return 'MNG-' + Math.floor(100000 + Math.random() * 900000);
-}
-
 exports.store = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -275,7 +270,7 @@ exports.store = async (req, res) => {
         // --- If Manager, insert into managers table ---
         if (roleNames.includes('manager')) {
             if (!(await managerExists(connection, insertedUserId))) {
-                const managerCode = generateManagerCode();
+                const managerCode = await uniqueCode('MNG');
                 await connection.query('INSERT INTO managers (user_id, manager_code, admin_code) VALUES (?, ?, ?)',
                     [insertedUserId, managerCode, admin_code]
                 );

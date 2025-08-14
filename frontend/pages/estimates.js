@@ -42,10 +42,10 @@ import CheckPermission from "../components/ui/CkeckPermission";
 import DeleteConfirmationModal from "../components/ui/DeleteConfirmationModal";
 import { ESTIMATE_STATUSES, DEFAULT_FORM_VALUES, FORMATDATE, FORMATCURRENCY, numericInputProps } from "../utils/constants";
 
-import { 
-  CalculatorIcon, PlusIcon, BuildingOfficeIcon,CurrencyRupeeIcon,
+import {
+  CalculatorIcon, PlusIcon, BuildingOfficeIcon, CurrencyRupeeIcon,
   DocumentTextIcon, ClockIcon, ArrowDownTrayIcon, EyeIcon,
-  PencilSquareIcon, TrashIcon, UsersIcon
+  PencilSquareIcon, TrashIcon
 } from "@heroicons/react/24/outline";
 
 
@@ -131,7 +131,7 @@ const EstimateForm = ({ initial, onSubmit, onClose, allProperties, allAgents, al
   }, [watchedValues]);
 
   useEffect(() => {
-    setCalculated(prev => 
+    setCalculated(prev =>
       prev.total !== calculations.total || prev.totalBrokerage !== calculations.totalBrokerage
         ? { total: calculations.total, totalBrokerage: calculations.totalBrokerage }
         : prev
@@ -205,7 +205,7 @@ const EstimateForm = ({ initial, onSubmit, onClose, allProperties, allAgents, al
         {/* Property & Agent Selection */}
         <FormSection icon={BuildingOfficeIcon} title="Property & Agent Details">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           
+
             <FormField label="Agent" required error={errors.agentCode}>
               <select
                 {...register('agentCode', { required: 'Agent is required' })}
@@ -438,37 +438,37 @@ export default function Estimates() {
     { key: 'startDate', label: 'Start Date', options: [], loading: false, type: 'date' },
     { key: 'endDate', label: 'End Date', options: [], loading: false, type: 'date' },
   ], [allAgents, allProperties, allAgentsLoading, allPropertiesLoading, isAgent]);
-  
+
   const columns = useMemo(() => [
-    { 
-      key: 'property_code', label: 'Property Code', 
+    {
+      key: 'property_code', label: 'Property Code',
       render: (val) => <CodeBadge code={val} size="xxs" />,
       mobilePriority: true
     },
-    { 
+    {
       key: 'agent_code', label: 'Agent Code',
       render: (val) => <CodeBadge code={val} size="xxs" />,
       mobilePriority: true
     },
-    { 
+    {
       key: 'property_size', label: 'Size (sq ft)',
       render: (val) => <div className="text-sm font-medium text-gray-900">{safeParseFloat(val).toLocaleString()}</div>,
       mobilePriority: true
     },
-    { 
+    {
       key: 'property_rate', label: 'Rate (₹/sq ft)',
       render: (val) => <div className="text-sm text-gray-600">{FORMATCURRENCY(val)}</div>
     },
-    { 
+    {
       key: 'total_brokerage', label: 'Total Brokerage',
       render: (val) => <div className="text-sm font-semibold text-green-700">{FORMATCURRENCY(val)}</div>
     },
-    { 
+    {
       key: 'total', label: 'Grand Total',
       render: (val) => <div className="text-sm font-bold text-gray-900">{FORMATCURRENCY(val)}</div>,
       mobilePriority: true
     },
-    { 
+    {
       key: 'status', label: 'Status',
       render: (val) => {
         const status = ESTIMATE_STATUSES.find(s => s.value === val);
@@ -476,7 +476,7 @@ export default function Estimates() {
       },
       mobilePriority: true
     },
-    { 
+    {
       key: 'created_at', label: 'Created',
       render: (val) => <div className="text-sm text-gray-500">{FORMATDATE(val, 3)}</div>
     },
@@ -526,13 +526,13 @@ export default function Estimates() {
   useEffect(() => {
     setAllAgentsLoading(true);
     axiosInstance.get('/api/users/agents-for-current-user')
-    .then(res => {
-      setAllAgents(res.data.agents || []);
-    })
-    .catch((err) => { showErrorToast(err, "Failed to load agents"); })
-    .finally(() => setAllAgentsLoading(false));
+      .then(res => {
+        setAllAgents(res.data.agents || []);
+      })
+      .catch((err) => { showErrorToast(err, "Failed to load agents"); })
+      .finally(() => setAllAgentsLoading(false));
   }, []);
- 
+
   useEffect(() => {
     setAllPropertiesLoading(true);
     dispatch(fetchAllProperties())
@@ -542,12 +542,12 @@ export default function Estimates() {
       .catch((err) => { showErrorToast(err, "Failed to load properties"); })
       .finally(() => setAllPropertiesLoading(false));
   }, [dispatch]);
-  
-// Effects
+
+  // Effects
   useEffect(() => {
-    dispatch(fetchEstimates({ 
-      page: pagination.currentPage, 
-      perPage: pagination.perPage, 
+    dispatch(fetchEstimates({
+      page: pagination.currentPage,
+      perPage: pagination.perPage,
       search: debouncedSearch,
       role: user?.role,
     }));
@@ -566,31 +566,31 @@ export default function Estimates() {
     }
   }, [error, dispatch]);
 
-  const handlePageChange = useCallback((page) => { setPagination(prev => ({ ...prev, currentPage: page }));}, []);
+  const handlePageChange = useCallback((page) => { setPagination(prev => ({ ...prev, currentPage: page })); }, []);
   const handleCreate = async (formData) => {
     try {
       await dispatch(createEstimate(formData)).unwrap();
       toast.success('Estimate created successfully!');
       setModal({ open: false, estimate: null });
-      dispatch(fetchEstimates({ 
-        page: pagination.currentPage, 
-        perPage: pagination.perPage, 
-        search: debouncedSearch 
+      dispatch(fetchEstimates({
+        page: pagination.currentPage,
+        perPage: pagination.perPage,
+        search: debouncedSearch
       }));
     } catch (error) {
       toast.error(error || 'Failed to create estimate');
     }
   };
-  
+
   const handleEdit = async (formData) => {
     try {
       await dispatch(updateEstimate({ id: modal.estimate.id, estimateData: formData })).unwrap();
       toast.success('Estimate updated successfully!');
       setModal({ open: false, estimate: null });
-      dispatch(fetchEstimates({ 
-        page: pagination.currentPage, 
-        perPage: pagination.perPage, 
-        search: debouncedSearch 
+      dispatch(fetchEstimates({
+        page: pagination.currentPage,
+        perPage: pagination.perPage,
+        search: debouncedSearch
       }));
     } catch (error) {
       toast.error(error || 'Failed to update estimate');
@@ -602,17 +602,17 @@ export default function Estimates() {
       await dispatch(deleteEstimate(deleteId)).unwrap();
       toast.success('Estimate deleted successfully!');
       setDeleteId(null);
-      dispatch(fetchEstimates({ 
-        page: pagination.currentPage, 
-        perPage: pagination.perPage, 
-        search: debouncedSearch 
+      dispatch(fetchEstimates({
+        page: pagination.currentPage,
+        perPage: pagination.perPage,
+        search: debouncedSearch
       }));
     } catch (error) {
       toast.error(error || 'Failed to delete estimate');
     }
   };
 
-  const handleCloseModal = useCallback(() => { setModal({ open: false, estimate: null });}, []);
+  const handleCloseModal = useCallback(() => { setModal({ open: false, estimate: null }); }, []);
   const handleSearchChange = setSearchQuery;
   const filteredColumns = useMemo(() => columns.filter(col => visibleColumns.includes(col.key)), [columns, visibleColumns]);
   const columnControlsColumns = useMemo(() => columns.filter(col => !col.hideFromColumnControls), [columns]);
@@ -639,7 +639,7 @@ export default function Estimates() {
       </div>
     );
   }
-  
+
   return (
     <CheckPermission permission="estimate-list">
       <div className="min-h-screen bg-gray-50">
@@ -653,9 +653,9 @@ export default function Estimates() {
               </div>
               <div className="flex items-center gap-3">
                 <CheckPermission permission="estimate-export">
-                  <Button 
-                    variant="outline" 
-                    icon={ArrowDownTrayIcon} 
+                  <Button
+                    variant="outline"
+                    icon={ArrowDownTrayIcon}
                     size="sm"
                     onClick={handleOpenExportModal}
                     disabled={exportLoading}
@@ -664,7 +664,7 @@ export default function Estimates() {
                   </Button>
                 </CheckPermission>
                 <CheckPermission permission="estimate-create">
-                  <Button 
+                  <Button
                     variant="primary"
                     icon={PlusIcon}
                     size="sm"
@@ -692,8 +692,8 @@ export default function Estimates() {
               showColumnControls={true}
               filters={[]}
               activeFilters={{}}
-              onFilterChange={() => {}}
-              onClearFilters={() => {}}
+              onFilterChange={() => { }}
+              onClearFilters={() => { }}
             />
             {/* Table Card */}
             <Card variant="elevated">

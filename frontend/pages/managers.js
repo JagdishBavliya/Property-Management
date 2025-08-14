@@ -6,13 +6,13 @@ import Hashids from 'hashids';
 import { useRouter } from 'next/router';
 
 // Redux
-import { 
+import {
   fetchRoles,
   selectRoles,
   selectRolesLoading,
   selectRolesError
 } from '../store/slices/rolesSlice';
-import { 
+import {
   createUser,
   updateUser,
   selectUsers,
@@ -31,17 +31,16 @@ import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import Card from '../components/ui/Card';
-import Select from '../components/ui/Select';
 import CodeBadge from '../components/ui/CodeBadge';
 import Pagination from '../components/ui/Pagination';
 import FilterSection from '../components/ui/FilterSection';
 import CheckPermission from '../components/ui/CkeckPermission';
 import DeleteConfirmationModal from '../components/ui/DeleteConfirmationModal';
 
-import { 
-  PencilSquareIcon, 
-  TrashIcon, 
-  EyeIcon, 
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  EyeIcon,
   PlusIcon,
   UserIcon,
   EnvelopeIcon,
@@ -127,7 +126,7 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
           {initial ? 'Edit Manager' : 'Add New Manager'}
         </h3>
         <p className="text-sm text-gray-600 max-w-sm mx-auto">
-          {initial 
+          {initial
             ? 'Update manager information and permissions.'
             : 'Create a new manager account with full access to property management.'
           }
@@ -143,7 +142,7 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
             </div>
             <h4 className="text-base font-semibold text-gray-900">Personal Information</h4>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div className="space-y-1.5">
@@ -156,13 +155,12 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
                 </div>
                 <input
                   type="text"
-                  {...register('name', { 
+                  {...register('name', {
                     required: 'Name is required',
                     minLength: { value: 2, message: 'Name must be at least 2 characters' }
                   })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${errors.name ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter full name"
                 />
               </div>
@@ -182,16 +180,15 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
                 </div>
                 <input
                   type="email"
-                  {...register('email', { 
+                  {...register('email', {
                     required: 'Email is required',
-                    pattern: { 
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-                      message: 'Invalid email address' 
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address'
                     }
                   })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${errors.email ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter email address"
                 />
               </div>
@@ -211,17 +208,16 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
                 </div>
                 <input
                   type="tel"
-                  {...register('phone', { 
+                  {...register('phone', {
                     required: 'Phone is required',
-                    pattern: { 
+                    pattern: {
                       value: /^[0-9]{10}$/,
-                      message: 'Please enter a valid 10-digit mobile number' 
+                      message: 'Please enter a valid 10-digit mobile number'
                     }
                   })}
                   {...numericInputProps.digits({ maxLength: 10 })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${
-                    errors.phone ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${errors.phone ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter phone number"
                 />
               </div>
@@ -267,7 +263,7 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
               {initial ? 'Optional' : 'Required'}
             </span>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Password */}
             <div className="space-y-1.5">
@@ -280,13 +276,12 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
                 </div>
                 <input
                   type="password"
-                  {...register('password', { 
+                  {...register('password', {
                     required: initial ? false : 'Password is required',
                     minLength: { value: 6, message: 'Password must be at least 6 characters' }
                   })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${errors.password ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder={initial ? "Enter new password" : "Enter password"}
                 />
               </div>
@@ -306,16 +301,15 @@ const UserForm = ({ initial, onSubmit, onClose, roles, loading }) => {
                 </div>
                 <input
                   type="password"
-                  {...register('confirm_password', { 
+                  {...register('confirm_password', {
                     required: initial ? false : 'Confirm password is required',
                     validate: value => {
                       if (initial && !watchedPassword) return true;
                       return value === watchedPassword || 'Passwords do not match';
                     }
                   })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${
-                    errors.confirm_password ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-sm ${errors.confirm_password ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder={initial ? "Confirm new password" : "Confirm password"}
                 />
               </div>
@@ -382,8 +376,8 @@ export default function UsersPage() {
   const updateLoading = useSelector(selectUpdateUserLoading);
   const deleteLoading = useSelector(selectDeleteUserLoading);
 
-  useEffect(() => { 
-    dispatch(fetchRoles()); 
+  useEffect(() => {
+    dispatch(fetchRoles());
   }, [dispatch]);
 
   useEffect(() => {
@@ -459,44 +453,34 @@ export default function UsersPage() {
 
   const hashids = new Hashids('your-salt-string', 6);
   const columns = [
-    { 
-      key: 'admin_code', 
-      label: 'Admin Code', 
-      render: (val) => (
-        <CodeBadge code={val} size="xxs" />
-      ),
+    {
+      key: 'admin_code',
+      label: 'Admin Code',
+      render: (val) => (<CodeBadge code={val} size="xxs" />),
       mobilePriority: true
     },
-    { 
-      key: 'user_code', 
-      label: 'User Code', 
-      render: (val) => (
-        <CodeBadge code={val} size="xxs" />
-      ),
+    {
+      key: 'user_code',
+      label: 'User Code',
+      render: (val) => (<CodeBadge code={val} size="xxs" />),
       mobilePriority: true
     },
 
-    { 
-      key: 'name', 
+    {
+      key: 'name',
       label: 'Name',
-      render: (val) => (
-        <div className="font-medium text-gray-900">{val}</div>
-      ),
+      render: (val) => (<div className="font-medium text-gray-900">{val}</div>),
       mobilePriority: true
     },
-    { 
-      key: 'email', 
+    {
+      key: 'email',
       label: 'Email',
-      render: (val) => (
-        <div className="text-sm text-gray-600 truncate max-w-[200px]" title={val}>{val}</div>
-      )
+      render: (val) => (<div className="text-sm text-gray-600 truncate max-w-[200px]" title={val}>{val}</div>),
     },
-    { 
-      key: 'phone', 
+    {
+      key: 'phone',
       label: 'Phone',
-      render: (val) => (
-        <div className="text-sm text-gray-600 font-mono">{val}</div>
-      )
+      render: (val) => (<div className="text-sm text-gray-600 font-mono">{val}</div>),
     },
     {
       key: 'actions',
@@ -551,7 +535,7 @@ export default function UsersPage() {
               <p className="mt-2 text-sm text-gray-600">Manage your manager users and their details.</p>
             </div>
             <CheckPermission permission="manager-create">
-              <Button 
+              <Button
                 variant="primary"
                 icon={PlusIcon}
                 size="sm"

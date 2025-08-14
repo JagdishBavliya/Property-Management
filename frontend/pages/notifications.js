@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from "../hooks/useAuth";
 import { useRoleFlags } from "../hooks/useRoleFlags";
 import { toast } from "react-toastify";
-import  axiosInstance  from "../utils/axiosInstance";
+import axiosInstance from "../utils/axiosInstance";
 
 // Redux
 import {
@@ -31,9 +31,7 @@ import { useExportModal } from "../hooks/useExportModal";
 import Card from "../components/ui/Card";
 import Modal from "../components/ui/Modal";
 import Table from "../components/ui/Table";
-import Input from "../components/ui/Input";
 import Badge from "../components/ui/Badge";
-import Select from "../components/ui/Select";
 import Button from "../components/ui/Button";
 import Pagination from "../components/ui/Pagination";
 import ExportModal from '../components/ui/ExportModal';
@@ -175,8 +173,8 @@ export default function NotificationsWithPermissions() {
           roles: user.roles,
         })) || []
       );
-    } catch (err){
-      console.error("FETCH ERROR",err)
+    } catch (err) {
+      console.error("FETCH ERROR", err)
     } finally {
       setLoadingUsers(false);
     }
@@ -502,54 +500,54 @@ export default function NotificationsWithPermissions() {
           </div>
 
           {/* Three-Box Layout */}
-           <CheckPermission permission="notification-stats">
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-               {/* Box 1: Total Notifications */}
-               <div className="lg:col-span-1">
-                 <Card>
-                   <div className="flex items-center">
-                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
-                       <BellIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-                     </div>
-                     <div className="ml-2 sm:ml-3 flex-1 min-w-0">
-                       <p className="text-sm font-medium text-gray-600">Total Notifications</p>
-                       <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.totalNotifications}</p>
-                     </div>
-                   </div>
-                 </Card>
-               </div>
+          <CheckPermission permission="notification-stats">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Box 1: Total Notifications */}
+              <div className="lg:col-span-1">
+                <Card>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+                      <BellIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                    </div>
+                    <div className="ml-2 sm:ml-3 flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-600">Total Notifications</p>
+                      <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.totalNotifications}</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
 
-               {/* Box 2: Sent Today */}
-               <div className="lg:col-span-1">
-                 <Card>
-                   <div className="flex items-center">
-                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
-                       <SpeakerWaveIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                     </div>
-                     <div className="ml-2 sm:ml-3 flex-1 min-w-0">
-                       <p className="text-sm font-medium text-gray-600">Sent Today</p>
-                       <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.sentToday}</p>
-                     </div>
-                   </div>
-                 </Card>
-               </div>
+              {/* Box 2: Sent Today */}
+              <div className="lg:col-span-1">
+                <Card>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                      <SpeakerWaveIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                    </div>
+                    <div className="ml-2 sm:ml-3 flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-600">Sent Today</p>
+                      <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.sentToday}</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
 
-               {/* Box 3: Active */}
-               <div className="lg:col-span-1">
-                 <Card>
-                   <div className="flex items-center">
-                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
-                       <UserGroupIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
-                     </div>
-                     <div className="ml-2 sm:ml-3 flex-1 min-w-0">
-                       <p className="text-sm font-medium text-gray-600">Active</p>
-                       <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.activeNotifications}</p>
-                     </div>
-                   </div>
-                 </Card>
-               </div>
-             </div>
-           </CheckPermission>
+              {/* Box 3: Active */}
+              <div className="lg:col-span-1">
+                <Card>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                      <UserGroupIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                    </div>
+                    <div className="ml-2 sm:ml-3 flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-600">Active</p>
+                      <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">{stats.activeNotifications}</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </CheckPermission>
 
           {/* Filter Section */}
           <FilterSection
@@ -894,106 +892,106 @@ export default function NotificationsWithPermissions() {
         </Modal>
       </CheckPermission>
 
-             {/* View Notification Modal */}
-       <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title={null} size="md">
-         {selectedNotification && (
-           <div className="p-0 overflow-hidden max-h-[80vh] flex flex-col rounded-lg">
-             {/* Header with gradient background */}
-             <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-4 relative overflow-hidden flex-shrink-0 rounded-t-lg mx-4 mt-4 mb-4">
-               {/* Background pattern for visual interest */}
-               <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
-               <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
-               <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
-               
-               <div className="relative flex items-start gap-3">
-                 {/* Icon container */}
-                 <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2.5 flex items-center justify-center border border-white/30 flex-shrink-0">
-                   {(() => {
-                     const typeConfig = NOTIFICATION_TYPES.find(t => t.value === selectedNotification.type);
-                     const Icon = typeConfig?.icon || BellIcon;
-                     return <Icon className="h-6 w-6 text-white" />;
-                   })()}
-                 </div>
-                 
-                 <div className="flex-1 min-w-0">
-                   <h2 className="text-xl font-bold text-white mb-2 leading-tight line-clamp-2">
-                     {selectedNotification.title}
-                   </h2>
-                   <div className="flex flex-wrap gap-1.5 items-center">
-                     <Badge 
-                       variant="primary" 
-                       size="sm"
-                       className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
-                     >
-                       {NOTIFICATION_TYPES.find(t => t.value === selectedNotification.type)?.label || selectedNotification.type}
-                     </Badge>
-                     <Badge 
-                       variant="secondary" 
-                       size="sm"
-                       className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
-                     >
-                       {PRIORITY_LEVELS.find(p => p.value === selectedNotification.priority)?.label || selectedNotification.priority}
-                     </Badge>
-                     <Badge 
-                       variant={selectedNotification.is_read ? 'success' : 'accent'} 
-                       size="sm"
-                       className={selectedNotification.is_read 
-                         ? "bg-green-500/20 text-green-100 border-green-400/30 backdrop-blur-sm" 
-                         : "bg-accent-500/20 text-accent-100 border-accent-400/30 backdrop-blur-sm"
-                       }
-                     >
-                       {selectedNotification.is_read ? 'Read' : 'Unread'}
-                     </Badge>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             
-             {/* Content section - scrollable */}
-             <div className="px-4 pb-4 space-y-4 flex-1 overflow-y-auto">
+      {/* View Notification Modal */}
+      <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title={null} size="md">
+        {selectedNotification && (
+          <div className="p-0 overflow-hidden max-h-[80vh] flex flex-col rounded-lg">
+            {/* Header with gradient background */}
+            <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-4 relative overflow-hidden flex-shrink-0 rounded-t-lg mx-4 mt-4 mb-4">
+              {/* Background pattern for visual interest */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
+              <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
+
+              <div className="relative flex items-start gap-3">
+                {/* Icon container */}
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2.5 flex items-center justify-center border border-white/30 flex-shrink-0">
+                  {(() => {
+                    const typeConfig = NOTIFICATION_TYPES.find(t => t.value === selectedNotification.type);
+                    const Icon = typeConfig?.icon || BellIcon;
+                    return <Icon className="h-6 w-6 text-white" />;
+                  })()}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl font-bold text-white mb-2 leading-tight line-clamp-2">
+                    {selectedNotification.title}
+                  </h2>
+                  <div className="flex flex-wrap gap-1.5 items-center">
+                    <Badge
+                      variant="primary"
+                      size="sm"
+                      className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
+                    >
+                      {NOTIFICATION_TYPES.find(t => t.value === selectedNotification.type)?.label || selectedNotification.type}
+                    </Badge>
+                    <Badge
+                      variant="secondary"
+                      size="sm"
+                      className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
+                    >
+                      {PRIORITY_LEVELS.find(p => p.value === selectedNotification.priority)?.label || selectedNotification.priority}
+                    </Badge>
+                    <Badge
+                      variant={selectedNotification.is_read ? 'success' : 'accent'}
+                      size="sm"
+                      className={selectedNotification.is_read
+                        ? "bg-green-500/20 text-green-100 border-green-400/30 backdrop-blur-sm"
+                        : "bg-accent-500/20 text-accent-100 border-accent-400/30 backdrop-blur-sm"
+                      }
+                    >
+                      {selectedNotification.is_read ? 'Read' : 'Unread'}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Content section - scrollable */}
+            <div className="px-4 pb-4 space-y-4 flex-1 overflow-y-auto">
               {/* Metadata Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">From</div>
                   <div className="font-semibold text-gray-900 text-sm">{selectedNotification.created_by_name}</div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Target Audience</div>
                   <div className="font-semibold text-gray-900 text-sm">{selectedNotification.target_audience}</div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Created At</div>
                   <div className="font-semibold text-gray-900 text-sm">{FORMATDATE(selectedNotification.created_at, 3)}</div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Scheduled At</div>
                   <div className="font-semibold text-gray-900 text-sm">
                     {selectedNotification.scheduled_at ? FORMATDATE(selectedNotification.scheduled_at, 3) : '-'}
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Expires At</div>
                   <div className="font-semibold text-gray-900 text-sm">
                     {selectedNotification.expires_at ? FORMATDATE(selectedNotification.expires_at, 3) : '-'}
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email Sent</div>
                   <div className="font-semibold text-gray-900 text-sm">
-                    <Badge 
-                      variant={selectedNotification.email_sent ? 'success' : 'secondary'} 
+                    <Badge
+                      variant={selectedNotification.email_sent ? 'success' : 'secondary'}
                       size="xs"
                     >
                       {selectedNotification.email_sent ? 'Yes' : 'No'}
                     </Badge>
                   </div>
                 </div>
-                
+
                 {selectedNotification.read_at && (
                   <div className="sm:col-span-2 bg-gray-100 rounded-lg p-3 border border-gray-200">
                     <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Read At</div>
@@ -1001,7 +999,7 @@ export default function NotificationsWithPermissions() {
                   </div>
                 )}
               </div>
-              
+
               {/* Message section */}
               <div className="space-y-2">
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">Message</div>
@@ -1013,7 +1011,7 @@ export default function NotificationsWithPermissions() {
           </div>
         )}
       </Modal>
-      
+
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}

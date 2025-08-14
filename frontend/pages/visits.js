@@ -10,12 +10,10 @@ import axiosInstance from "../utils/axiosInstance";
 // Components
 import Card from "../components/ui/Card";
 import Modal from "../components/ui/Modal";
-import Input from "../components/ui/Input";
 import Table from "../components/ui/Table";
 import Badge from "../components/ui/Badge";
 import CodeBadge from "../components/ui/CodeBadge";
 import Button from "../components/ui/Button";
-import Select from "../components/ui/Select";
 import Pagination from "../components/ui/Pagination";
 import ExportModal from '../components/ui/ExportModal';
 import FilterSection from "../components/ui/FilterSection";

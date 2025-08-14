@@ -71,7 +71,7 @@ export default function Reports() {
   const [exportFilters, setExportFilters] = useState({});
   const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const cityOptions = [
     ...(reportData.cityStats
       ? reportData.cityStats.map(item => ({ value: item.city, label: item.city }))
@@ -410,7 +410,7 @@ export default function Reports() {
   useEffect(() => {
     if (error) {
       toast.error(error);
-      const timer = setTimeout(() => setError("") , 4000);
+      const timer = setTimeout(() => setError(""), 4000);
       return () => clearTimeout(timer);
     }
   }, [error]);
@@ -1047,7 +1047,7 @@ export default function Reports() {
               })}
             </div>
           </Card>
-      
+
 
           {/* Export Modal Modern */}
           <ExportModal

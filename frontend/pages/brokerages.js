@@ -8,7 +8,7 @@ import Hashids from 'hashids';
 import axiosInstance from '@/utils/axiosInstance';
 
 // Redux
-import { 
+import {
   fetchBrokerages,
   createBrokerage,
   updateBrokerage,
@@ -29,7 +29,7 @@ import {
   clearDeleteError,
 } from '../store/slices/brokeragesSlice';
 import { fetchAllProperties } from '../store/slices/propertiesSlice';
-import { fetchAllUsers} from '../store/slices/usersSlice';
+import { fetchAllUsers } from '../store/slices/usersSlice';
 
 // Components
 import Table from '../components/ui/Table';
@@ -44,9 +44,9 @@ import CheckPermission from '../components/ui/CkeckPermission';
 import DeleteConfirmationModal from '../components/ui/DeleteConfirmationModal';
 import { PAYMENT_MODES, FORMATDATE, numericInputProps } from '../utils/constants';
 
-import { 
-  PencilSquareIcon, 
-  TrashIcon, 
+import {
+  PencilSquareIcon,
+  TrashIcon,
   EyeIcon,
   PlusIcon,
   CurrencyDollarIcon,
@@ -114,7 +114,7 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
     if (!initial && watchedPropertyCode && watchedAgentCode && watchedBrokerageAmount) {
       const agent = agents.find(a => a.user_code === watchedAgentCode);
       const property = properties.find(p => p.property_code === watchedPropertyCode);
-      
+
       if (agent && property) {
         if (agent.commission?.type === 'percent') {
           const agentCommission = (parseFloat(watchedBrokerageAmount) * parseFloat(agent.commission.value)) / 100;
@@ -144,7 +144,7 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
           {initial ? 'Edit Brokerage' : 'Add New Brokerage'}
         </h3>
         <p className="text-sm text-gray-600 max-w-sm mx-auto">
-          {initial 
+          {initial
             ? 'Update brokerage details and commission information.'
             : 'Create a new brokerage deal with property, agent, and commission details.'
           }
@@ -160,7 +160,7 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
             </div>
             <h4 className="text-sm sm:text-base font-semibold text-gray-900">Deal Information</h4>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* Property Code */}
             <div className="space-y-1.5">
@@ -170,9 +170,8 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                   <HomeIcon className="h-4 w-4 text-gray-400" />
                 </div>
                 <select
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                    errors.property_code ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.property_code ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   {...register('property_code', { required: 'Property code is required' })}
                 >
                   <option value="">Select property</option>
@@ -196,9 +195,8 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                   <UserIcon className="h-4 w-4 text-gray-400" />
                 </div>
                 <select
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                    errors.agent_code ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.agent_code ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   {...register('agent_code', { required: 'Agent code is required' })}
                 >
                   <option value="">Select agent</option>
@@ -222,9 +220,8 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                   <CreditCardIcon className="h-4 w-4 text-gray-400" />
                 </div>
                 <select
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                    errors.mode_of_payment ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.mode_of_payment ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   {...register('mode_of_payment', { required: 'Payment mode is required' })}
                 >
                   <option value="">Select payment mode</option>
@@ -248,7 +245,7 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
             </div>
             <h4 className="text-sm sm:text-base font-semibold text-gray-900">Financial Details</h4>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* Brokerage Amount */}
             <div className="space-y-1.5">
@@ -259,14 +256,13 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                 </div>
                 <input
                   type="text"
-                  {...register('total_brokerage', { 
+                  {...register('total_brokerage', {
                     required: 'Brokerage amount is required',
                     min: { value: 0, message: 'Amount cannot be negative' }
                   })}
                   {...numericInputProps.decimal({ decimalPlaces: 2 })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                    errors.total_brokerage ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.total_brokerage ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter brokerage amount"
                 />
               </div>
@@ -284,14 +280,13 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                 </div>
                 <input
                   type="text"
-                  {...register('agent_commission', { 
+                  {...register('agent_commission', {
                     required: 'Agent commission is required',
                     min: { value: 0, message: 'Commission cannot be negative' }
                   })}
                   {...numericInputProps.decimal({ decimalPlaces: 2 })}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                    errors.agent_commission ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.agent_commission ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter agent commission"
                 />
               </div>
@@ -310,14 +305,13 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
                   </div>
                   <input
                     type="text"
-                    {...register('manager_commission_value', { 
+                    {...register('manager_commission_value', {
                       required: 'Manager commission is required',
                       min: { value: 0, message: 'Commission cannot be negative' }
                     })}
                     {...numericInputProps.decimal({ decimalPlaces: 2 })}
-                    className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${
-                      errors.manager_commission_value ? 'border-red-300' : 'border-gray-300'
-                    }`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm ${errors.manager_commission_value ? 'border-red-300' : 'border-gray-300'
+                      }`}
                     placeholder="Enter manager commission"
                   />
                 </div>
@@ -345,7 +339,7 @@ const BrokerageForm = ({ initial, onSubmit, onClose, properties, agents, manager
             <h4 className="text-sm sm:text-base font-semibold text-gray-900">Additional Information</h4>
             <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Optional</span>
           </div>
-          
+
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Notes</label>
             <textarea
@@ -393,7 +387,7 @@ export default function BrokeragesPage() {
   const [editingBrokerage, setEditingBrokerage] = useState(null);
   const [deletingBrokerage, setDeletingBrokerage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({ propertyCode: '', agentCode: '', managerCode: ''});
+  const [filters, setFilters] = useState({ propertyCode: '', agentCode: '', managerCode: '' });
   const [visibleColumns, setVisibleColumns] = useState([
     'brokerage_code',
     'property_code',
@@ -424,7 +418,7 @@ export default function BrokeragesPage() {
     const fetchFilterData = async () => {
       setDataLoading(true);
       try {
-        const propertiesResult = await dispatch(fetchAllProperties()).unwrap();        
+        const propertiesResult = await dispatch(fetchAllProperties()).unwrap();
         if (propertiesResult.properties) {
           setAllProperties(propertiesResult.properties);
         }
@@ -443,16 +437,16 @@ export default function BrokeragesPage() {
 
   useEffect(() => {
     axiosInstance.get('/api/users/agents-for-current-user')
-    .then(res => {
-      setAllAgents(res.data.agents || []);
-    }).catch((err) => { 
-      showErrorToast(err, "Failed to load agents"); 
-    })
+      .then(res => {
+        setAllAgents(res.data.agents || []);
+      }).catch((err) => {
+        showErrorToast(err, "Failed to load agents");
+      })
   }, []);
 
   useEffect(() => {
-    dispatch(fetchBrokerages({ 
-      page: pagination.currentPage, 
+    dispatch(fetchBrokerages({
+      page: pagination.currentPage,
       perPage: pagination.perPage,
       search: searchTerm,
       propertyCode: filters.propertyCode,
@@ -477,8 +471,8 @@ export default function BrokeragesPage() {
   }, [createError, updateError, deleteError, dispatch]);
 
   const handlePageChange = (page) => {
-    dispatch(fetchBrokerages({ 
-      page, 
+    dispatch(fetchBrokerages({
+      page,
       perPage: pagination.perPage,
       search: searchTerm,
       propertyCode: filters.propertyCode,
@@ -503,8 +497,8 @@ export default function BrokeragesPage() {
       toast.success('Brokerage updated successfully');
       setShowModal(false);
       setEditingBrokerage(null);
-      dispatch(fetchBrokerages({ 
-        page: pagination.currentPage, 
+      dispatch(fetchBrokerages({
+        page: pagination.currentPage,
         perPage: pagination.perPage,
         search: searchTerm,
         propertyCode: filters.propertyCode,
@@ -543,7 +537,7 @@ export default function BrokeragesPage() {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setFilters({ propertyCode: '', agentCode: '', managerCode: ''});
+    setFilters({ propertyCode: '', agentCode: '', managerCode: '' });
   };
 
   const filterOptions = [
@@ -551,8 +545,8 @@ export default function BrokeragesPage() {
       key: 'propertyCode',
       label: 'Property Code',
       placeholder: 'All Properties',
-      options: allProperties.map((p, index) => ({ 
-        value: p.property_code, 
+      options: allProperties.map((p, index) => ({
+        value: p.property_code,
         label: `${p.property_code} - ${p.property_name}`,
         key: `property-${index}-${p.property_code}`
       }))
@@ -561,8 +555,8 @@ export default function BrokeragesPage() {
       key: 'agentCode',
       label: 'Agent Code',
       placeholder: 'All Agents',
-      options: allAgents.map((a, index) => ({ 
-        value: a.user_code, 
+      options: allAgents.map((a, index) => ({
+        value: a.user_code,
         label: `${a.user_code} - ${a.name}`,
         key: `agent-${index}-${a.user_code}`
       }))
@@ -571,8 +565,8 @@ export default function BrokeragesPage() {
       key: 'managerCode',
       label: 'Manager Code',
       placeholder: 'All Managers',
-      options: allManagers.map((m, index) => ({ 
-        value: m.user_code, 
+      options: allManagers.map((m, index) => ({
+        value: m.user_code,
         label: `${m.user_code} - ${m.name}`,
         key: `manager-${index}-${m.user_code}`
       }))
@@ -788,8 +782,8 @@ export default function BrokeragesPage() {
             </div>
             <div className="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-3">
               <CheckPermission permission="brokerage-create">
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   icon={PlusIcon}
                   size="sm"
                   iconSize="h-5 w-5 sm:h-6 sm:w-6"

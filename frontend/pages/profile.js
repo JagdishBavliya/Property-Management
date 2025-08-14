@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
 import { useRoleFlags } from '../hooks/useRoleFlags';
 import { updateUser } from '../store/slices/authSlice';
@@ -13,6 +13,7 @@ import Button from '../components/ui/Button';
 import UserAvatar from '../components/ui/UserAvatar';
 import CheckPermission from '../components/ui/CkeckPermission';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { getUser, selectUser, selectUserLoading } from '../store/slices/usersSlice';
 
 import {
   UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon, CalendarIcon,
@@ -25,7 +26,7 @@ import {
 const ProfileInfoField = ({ isEditing, label, value, icon: Icon, colorClass, as = 'input', name, type = 'text', required = false, ...props }) => {
   const InputComponent = as;
   const inputClasses = "w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-gray-500 transition-all duration-200 text-sm";
-  
+
   if (as === 'textarea') props.rows = props.rows || 3;
   return (
     <div>
@@ -53,7 +54,7 @@ const ProfileInfoField = ({ isEditing, label, value, icon: Icon, colorClass, as 
 };
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user: authUser } = useAuth();
   const { isAgent, isManager, isAdmin } = useRoleFlags();
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
@@ -62,33 +63,26 @@ export default function Profile() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
-  const [recentActivity, setRecentActivity] = useState([]);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const detailedUser = useSelector(selectUser);
+  const detailedLoading = useSelector(selectUserLoading);
+
   const hashids = new Hashids('your-salt-string', 6);
+  useEffect(() => {
+    if (authUser?.id) dispatch(getUser(authUser.id));
+  }, [dispatch, authUser?.id]);
+  const reduxProfile = detailedUser;
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      if (!user?.id) return;
-      
+      if (!authUser?.id) return;
       try {
         setLoading(true);
-        
-        // Fetch user profile details
-        const profileResponse = await axiosInstance.get(`/api/users/${user.id}`);
-        if (profileResponse.data.status) {
-          setUserProfile({
-            ...profileResponse.data.user,
-            roles: profileResponse.data.roles,
-            permissions: profileResponse.data.permissions,
-          });
-        }
-        // Fetch saved properties
         const propertiesResponse = await axiosInstance.get('/api/users/saved-properties');
         if (propertiesResponse.data.status) setSavedProperties(propertiesResponse.data.properties);
         await fetchRoleSpecificData();
-        
       } catch (error) {
         console.error('Error fetching profile data:', error);
       } finally {
@@ -97,7 +91,12 @@ export default function Profile() {
     };
 
     fetchProfileData();
-  }, [user?.id]);
+  }, [authUser?.id]);
+
+  // Keep local profile in sync with Redux detailed user
+  useEffect(() => {
+    setUserProfile(reduxProfile || null);
+  }, [reduxProfile]);
 
   const fetchRoleSpecificData = async () => {
     try {
@@ -108,26 +107,6 @@ export default function Profile() {
           commissionsEarned: 75000,
           activeListings: 8,
         });
-        setRecentActivity([
-      {
-        id: 1,
-        type: 'property',
-            message: 'Added new property listing',
-        time: '2 hours ago',
-        status: 'success',
-        icon: HomeIcon,
-        color: 'primary',
-      },
-      {
-        id: 2,
-        type: 'client',
-            message: 'Scheduled property viewing',
-        time: '4 hours ago',
-        status: 'info',
-        icon: UserIcon,
-        color: 'secondary',
-      },
-        ]);
       } else if (isManager) {
         setStats({
           teamSize: 12,
@@ -135,26 +114,6 @@ export default function Profile() {
           propertiesOversaw: 180,
           monthlyRevenue: 250000,
         });
-        setRecentActivity([
-          {
-            id: 1,
-            type: 'team',
-            message: 'Approved new agent application',
-            time: '1 hour ago',
-            status: 'success',
-            icon: UserIcon,
-            color: 'primary',
-          },
-          {
-            id: 2,
-            type: 'report',
-            message: 'Generated monthly performance report',
-            time: '3 hours ago',
-            status: 'info',
-            icon: ChartBarIcon,
-            color: 'secondary',
-          },
-        ]);
       } else if (isAdmin) {
         setStats({
           totalUsers: 150,
@@ -162,42 +121,10 @@ export default function Profile() {
           monthlyTransactions: 500,
           totalRevenue: 1200000,
         });
-        setRecentActivity([
-          {
-            id: 1,
-            type: 'system',
-            message: 'Updated system configuration',
-            time: '30 minutes ago',
-        status: 'success',
-            icon: CogIcon,
-            color: 'primary',
-          },
-          {
-            id: 2,
-            type: 'user',
-            message: 'Approved manager role assignment',
-            time: '2 hours ago',
-            status: 'info',
-            icon: ShieldCheckIcon,
-            color: 'secondary',
-          },
-        ]);
       }
     } catch (error) {
       console.error('Error fetching role-specific data:', error);
     }
-  };
-
-  const getIconColor = (color) => {
-    const colors = {
-      primary: 'text-primary-600',
-      secondary: 'text-secondary-600',
-      accent: 'text-accent-600',
-      success: 'text-success-600',
-      warning: 'text-warning-600',
-      danger: 'text-danger-600',
-    };
-    return colors[color] || colors.primary;
   };
 
   useEffect(() => {
@@ -235,15 +162,13 @@ export default function Profile() {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await axiosInstance.post(`/api/users/update-avatar/${user.id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await axiosInstance.post(`/api/users/update-avatar/${authUser?.id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.data.status) {
         setSuccessMessage('Profile picture updated successfully!');
-        setUserProfile(prev => ({ ...prev, avatar: response.data.avatarUrl}));
+        setUserProfile(prev => ({ ...prev, avatar: response.data.avatarUrl }));
         dispatch(updateUser({ avatar: response.data.avatarUrl }));
       } else {
         setErrorMessage(response.data.msg || 'Failed to update profile picture');
@@ -271,7 +196,7 @@ export default function Profile() {
         phone: formData.get('phone') || userProfile.phone,
       };
 
-      const response = await axiosInstance.put(`/api/users/update-profile/${user.id}`, updateData);
+      const response = await axiosInstance.put(`/api/users/update-profile/${authUser?.id}`, updateData);
 
       if (response.data.status) {
         setSuccessMessage('Profile updated successfully!');
@@ -301,7 +226,7 @@ export default function Profile() {
     }
   };
 
-  if (loading) {
+  if (loading || detailedLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <LoadingSpinner size="lg" />
@@ -380,7 +305,7 @@ export default function Profile() {
               <span className="font-medium">{successMessage}</span>
             </div>
           )}
-          
+
           {errorMessage && (
             <div className="bg-danger-50 border border-danger-200 text-danger-700 px-4 py-3 rounded-lg flex items-center gap-2">
               <svg className="h-5 w-5 text-danger-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -416,7 +341,7 @@ export default function Profile() {
                         </label>
                       )}
                     </div>
-                    
+
                     {/* Profile Information Section */}
                     <div className="flex-1 min-w-0 space-y-4">
                       {/* Name and Title */}
@@ -424,12 +349,12 @@ export default function Profile() {
                         <h2 className="text-3xl font-bold text-gray-900 leading-tight">
                           {userProfile.name}
                         </h2>
-                        
+
                         {/* Role and Code Badges */}
                         <div className="flex flex-wrap items-center gap-3">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-900 border border-primary-200 shadow-sm">
                             <SparklesIcon className="h-4 w-4 mr-1.5" />
-                            {user?.role}
+                            {authUser?.role}
                           </span>
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-900 border border-primary-200 shadow-sm">
                             <UserIcon className="h-4 w-4 mr-1" />
@@ -437,25 +362,25 @@ export default function Profile() {
                           </span>
                         </div>
                       </div>
-                      
+
                       {/* Contact and Join Information */}
                       <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
                           <CalendarIcon className="h-4 w-4 text-primary-600 flex-shrink-0" />
-                          <span className="font-medium">Joined {new Date(userProfile.created_at).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
+                          <span className="font-medium">Joined {new Date(userProfile.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
                           })}</span>
                         </div>
-                        
+
                         {userProfile.phone && (
                           <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
                             <PhoneIcon className="h-4 w-4 text-secondary-600 flex-shrink-0" />
                             <span className="font-medium">{userProfile.phone}</span>
                           </div>
                         )}
-                        
+
                         {userProfile.email && (
                           <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
                             <EnvelopeIcon className="h-4 w-4 text-accent-600 flex-shrink-0" />
@@ -519,7 +444,7 @@ export default function Profile() {
                 </form>
               </Card>
 
-                            {/* Role-Specific Information */}
+              {/* Role-Specific Information */}
               {isAgent && (
                 <Card title="Agent Information" variant="elevated">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -616,45 +541,45 @@ export default function Profile() {
 
               {/* Saved Properties */}
               {savedProperties.length > 0 && (
-              <Card title="Saved Properties" variant="elevated">
+                <Card title="Saved Properties" variant="elevated">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {savedProperties.map((property) => (
+                    {savedProperties.map((property) => (
                       <Link href={`/properties/${hashids.encode(property.id)}`} key={property.id} className="group">
-                         <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 overflow-hidden border border-gray-100">
-                              <div className="relative">
-                                  <div className="w-full h-32 bg-gray-200">
-                                      <img 
-                                          src={property.property_image} 
-                                          alt={property.property_name}
-                                          className="w-full h-full object-cover"
-                                      />
-                                  </div>
-                                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm">
-                                      <HeartIcon className="w-4 h-4 text-red-500" />
-                                  </div>
-                              </div>
-                              <div className="p-3">
-                                  <h4 className="font-semibold text-sm text-gray-800 truncate group-hover:text-primary-600 transition-colors">
-                                      {property.property_name}
-                                  </h4>
-                                  <div className="flex items-center text-gray-500 mt-1.5">
-                                      <MapPinIcon className="w-3 h-3 mr-1 flex-shrink-0" />
-                                      <p className="text-xs truncate">{property.city}</p>
-                                  </div>
-                                  <div className="mt-2.5 flex justify-between items-center">
-                                      <p className="text-lg font-bold text-primary-700">
-                                          ₹{parseFloat(property.full_deal_amount).toLocaleString('en-IN')}
-                                      </p>
-                                      <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
-                                          {property.property_type}
-                                      </span>
-                                  </div>
-                              </div>
+                        <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 overflow-hidden border border-gray-100">
+                          <div className="relative">
+                            <div className="w-full h-32 bg-gray-200">
+                              <img
+                                src={property.property_image}
+                                alt={property.property_name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm">
+                              <HeartIcon className="w-4 h-4 text-red-500" />
+                            </div>
                           </div>
+                          <div className="p-3">
+                            <h4 className="font-semibold text-sm text-gray-800 truncate group-hover:text-primary-600 transition-colors">
+                              {property.property_name}
+                            </h4>
+                            <div className="flex items-center text-gray-500 mt-1.5">
+                              <MapPinIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <p className="text-xs truncate">{property.city}</p>
+                            </div>
+                            <div className="mt-2.5 flex justify-between items-center">
+                              <p className="text-lg font-bold text-primary-700">
+                                ₹{parseFloat(property.full_deal_amount).toLocaleString('en-IN')}
+                              </p>
+                              <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
+                                {property.property_type}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </Link>
-                  ))}
+                    ))}
                   </div>
-              </Card>
+                </Card>
               )}
             </div>
 
@@ -662,7 +587,7 @@ export default function Profile() {
             <div className="space-y-4">
               {/* Performance Stats */}
               {stats && (
-                <Card title={`${user?.role} Statistics`} variant="elevated">
+                <Card title={`${authUser?.role} Statistics`} variant="elevated">
                   <div className="space-y-2">
                     {isAgent && (
                       <>
@@ -670,38 +595,38 @@ export default function Profile() {
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-primary-600 rounded-lg shadow-sm">
                               <BuildingOfficeIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-600">Properties Managed</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-600">Properties Managed</p>
                               <p className="text-xl font-bold text-gray-900">{stats.propertiesManaged}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="group p-3 bg-gradient-to-r from-secondary-50 to-secondary-100 rounded-lg border border-secondary-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-secondary-600 rounded-lg shadow-sm">
                               <CurrencyDollarIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
+                            </div>
+                            <div>
                               <p className="text-sm font-semibold text-gray-600">Commissions Earned</p>
                               <p className="text-xl font-bold text-gray-900">₹{stats.commissionsEarned?.toLocaleString('en-IN')}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="group p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-accent-600 rounded-lg shadow-sm">
                               <StarIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-600">Client Satisfaction</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-600">Client Satisfaction</p>
                               <p className="text-xl font-bold text-gray-900">{stats.clientSatisfaction}/5.0</p>
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="group p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-success-600 rounded-lg shadow-sm">
@@ -729,7 +654,7 @@ export default function Profile() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="group p-3 bg-gradient-to-r from-secondary-50 to-secondary-100 rounded-lg border border-secondary-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-secondary-600 rounded-lg shadow-sm">
@@ -741,7 +666,7 @@ export default function Profile() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="group p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-accent-600 rounded-lg shadow-sm">
@@ -753,7 +678,7 @@ export default function Profile() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="group p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-success-600 rounded-lg shadow-sm">
@@ -778,22 +703,22 @@ export default function Profile() {
                             <div>
                               <p className="text-sm font-semibold text-gray-600">Total Users</p>
                               <p className="text-xl font-bold text-gray-900">{stats.totalUsers}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="group p-3 bg-gradient-to-r from-secondary-50 to-secondary-100 rounded-lg border border-secondary-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-secondary-600 rounded-lg shadow-sm">
                               <ClockIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
+                            </div>
+                            <div>
                               <p className="text-sm font-semibold text-gray-600">System Uptime</p>
                               <p className="text-xl font-bold text-gray-900">{stats.systemUptime}%</p>
-                      </div>
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className="group p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-accent-600 rounded-lg shadow-sm">
@@ -802,32 +727,32 @@ export default function Profile() {
                             <div>
                               <p className="text-sm font-semibold text-gray-600">Monthly Transactions</p>
                               <p className="text-xl font-bold text-gray-900">{stats.monthlyTransactions}</p>
-                    </div>
-                  </div>
-                </div>
-                        
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="group p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200 hover:shadow-md transition-all duration-200 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-success-600 rounded-lg shadow-sm">
                               <CurrencyDollarIcon className="h-4 w-4 text-white" />
-                      </div>
+                            </div>
                             <div>
                               <p className="text-sm font-semibold text-gray-600">Total Revenue</p>
                               <p className="text-xl font-bold text-gray-900">₹{stats.totalRevenue?.toLocaleString('en-IN')}</p>
-                      </div>
-                    </div>
-                </div>
+                            </div>
+                          </div>
+                        </div>
                       </>
                     )}
-                </div>
-              </Card>
+                  </div>
+                </Card>
               )}
 
               {/* Quick Actions */}
               <Card title="Quick Actions" variant="elevated">
                 <div className="grid gap-2">
                   {/* Always visible actions */}
-                  <div 
+                  <div
                     className="group p-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg border border-primary-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
                     onClick={() => setIsEditing(true)}
                   >
@@ -837,7 +762,7 @@ export default function Profile() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
-                        Edit Profile
+                          Edit Profile
                         </h4>
                         <p className="text-xs text-gray-500">
                           Update information
@@ -845,7 +770,7 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Agent Quick Actions */}
                   {isAgent && (
                     <>
@@ -868,7 +793,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <CheckPermission permission="visit-list" fallback={null}>
                         <Link href="/visits">
                           <div className="group p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
@@ -888,7 +813,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <CheckPermission permission="estimate-list" fallback={null}>
                         <Link href="/estimates">
                           <div className="group p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
@@ -933,7 +858,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <CheckPermission permission="report-list" fallback={null}>
                         <Link href="/reports">
                           <div className="group p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
@@ -953,7 +878,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <CheckPermission permission="property-list" fallback={null}>
                         <Link href="/properties">
                           <div className="group p-3 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-lg border border-indigo-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
@@ -998,7 +923,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <CheckPermission permission="manager-list" fallback={null}>
                         <Link href="/managers">
                           <div className="group p-3 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
@@ -1018,7 +943,7 @@ export default function Profile() {
                           </div>
                         </Link>
                       </CheckPermission>
-                      
+
                       <Link href="/settings">
                         <div className="group p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
                           <div className="flex items-center gap-3">
@@ -1036,7 +961,7 @@ export default function Profile() {
                           </div>
                         </div>
                       </Link>
-                      
+
                       <CheckPermission permission="report-list" fallback={null}>
                         <Link href="/reports">
                           <div className="group p-3 bg-gradient-to-r from-teal-50 to-teal-100 rounded-lg border border-teal-200 hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
