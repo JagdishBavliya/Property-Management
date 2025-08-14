@@ -9,7 +9,7 @@ import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
 
 // Redux
-import { 
+import {
   fetchRoles,
   fetchPermissions,
   fetchRolePermissions,
@@ -73,7 +73,7 @@ export default function Settings() {
     }
   }, [selectedRole, roles.length, dispatch]);
 
-  useEffect(() => {}, [rolePermissions]);
+  useEffect(() => { }, [rolePermissions]);
 
   useEffect(() => {
     if (rolesError) {
@@ -104,7 +104,7 @@ export default function Settings() {
 
   const loadData = async () => {
     try {
-      await Promise.all([dispatch(fetchRoles()),dispatch(fetchPermissions())]);
+      await Promise.all([dispatch(fetchRoles()), dispatch(fetchPermissions())]);
     } catch (error) {
       console.error('Error loading data:', error);
       setMessage({ type: 'error', text: 'Failed to load data' });
@@ -123,8 +123,8 @@ export default function Settings() {
     try {
       const currentPermissions = rolePermissions[selectedRole] || [];
       await dispatch(updateRolePermissions({ roleId: selectedRole, permissions: currentPermissions })).unwrap();
-      
-      setRefreshTrigger(prev => prev + 1);      
+
+      setRefreshTrigger(prev => prev + 1);
       toast.success('Permissions updated successfully!');
       setMessage({ type: 'success', text: 'Permissions updated successfully!' });
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
@@ -196,7 +196,7 @@ export default function Settings() {
       newPerms = Array.from(new Set([...currentPermissions, ...ids]));
     } else {
       newPerms = currentPermissions.filter(id => !ids.includes(id));
-    }    
+    }
     dispatch(updateLocalRolePermissions({ roleId: selectedRole, permissions: newPerms }));
   };
 
@@ -204,7 +204,7 @@ export default function Settings() {
     if (!selectedRole) return;
     const currentPermissions = rolePermissions[selectedRole] || [];
     const allPermissionIds = permissions.map(p => p.id);
-    const allSelected = allPermissionIds.every(id => currentPermissions.includes(id));    
+    const allSelected = allPermissionIds.every(id => currentPermissions.includes(id));
     if (allSelected) {
       dispatch(updateLocalRolePermissions({ roleId: selectedRole, permissions: [] }));
     } else {
@@ -294,11 +294,10 @@ export default function Settings() {
               </div>
 
               {message.text && (
-                <div className={`mb-6 p-4 rounded-lg ${
-                  message.type === 'success' 
-                    ? 'bg-green-50 border border-green-200 text-green-700' 
+                <div className={`mb-6 p-4 rounded-lg ${message.type === 'success'
+                    ? 'bg-green-50 border border-green-200 text-green-700'
                     : 'bg-red-50 border border-red-200 text-red-700'
-                }`}>
+                  }`}>
                   {message.text}
                 </div>
               )}
@@ -306,36 +305,34 @@ export default function Settings() {
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Role Selection */}
                 <div className="lg:col-span-1">
-                                  <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">Select Role</h3>
-                  <div className="space-y-2">
-                    {roles.map((role) => {
-                      const permissionCount = getPermissionCount(role.id);
-                      return (
-                        <button
-                          key={`${role.id}-${refreshTrigger}`}
-                          onClick={() => setSelectedRole(role.id)}
-                          className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-between ${
-                            selectedRole === role.id
-                              ? 'bg-primary-100 text-primary-700 border border-primary-200'
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          <span>{role.name}</span>
-                          <span 
-                            key={`count-${role.id}-${permissionCount}-${refreshTrigger}`}
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              selectedRole === role.id
-                                ? 'bg-primary-200 text-primary-800'
-                                : 'bg-gray-200 text-gray-700'
-                            }`}>
-                            {permissionCount}
-                          </span>
-                        </button>
-                      );
-                    })}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="text-sm font-medium text-gray-900 mb-3">Select Role</h3>
+                    <div className="space-y-2">
+                      {roles.map((role) => {
+                        const permissionCount = getPermissionCount(role.id);
+                        return (
+                          <button
+                            key={`${role.id}-${refreshTrigger}`}
+                            onClick={() => setSelectedRole(role.id)}
+                            className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-between ${selectedRole === role.id
+                                ? 'bg-primary-100 text-primary-700 border border-primary-200'
+                                : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                          >
+                            <span>{role.name}</span>
+                            <span
+                              key={`count-${role.id}-${permissionCount}-${refreshTrigger}`}
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${selectedRole === role.id
+                                  ? 'bg-primary-200 text-primary-800'
+                                  : 'bg-gray-200 text-gray-700'
+                                }`}>
+                              {permissionCount}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
                 </div>
 
                 {/* Permissions */}
@@ -351,35 +348,35 @@ export default function Settings() {
                             {getPermissionCount(selectedRole)} of {permissions.length} permissions assigned
                           </p>
                         </div>
-                          <div className="flex items-center space-x-2">
-                           <Button
-                             variant="secondary"
-                             size="sm"
-                             onClick={handleSelectAllPermissions}
-                             disabled={updatePermissionsLoading}
-                           >
-                             {isAllSelected() ? (
-                               <>
-                                 <XMarkIcon className="h-4 w-4 mr-1" />
-                                 Unselect All
-                               </>
-                             ) : (
-                               <>
-                                 <CheckIcon className="h-4 w-4 mr-1" />
-                                 Select All
-                               </>
-                             )}
-                           </Button>
-                           <Button
-                             variant="primary"
-                             size="sm"
-                             onClick={handleSavePermissions}
-                             loading={updatePermissionsLoading}
-                             disabled={updatePermissionsLoading}
-                           >
-                             Update
-                           </Button>
-                         </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handleSelectAllPermissions}
+                            disabled={updatePermissionsLoading}
+                          >
+                            {isAllSelected() ? (
+                              <>
+                                <XMarkIcon className="h-4 w-4 mr-1" />
+                                Unselect All
+                              </>
+                            ) : (
+                              <>
+                                <CheckIcon className="h-4 w-4 mr-1" />
+                                Select All
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={handleSavePermissions}
+                            loading={updatePermissionsLoading}
+                            disabled={updatePermissionsLoading}
+                          >
+                            Update
+                          </Button>
+                        </div>
                       </div>
 
                       {rolePermissionsLoading ? (

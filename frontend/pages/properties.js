@@ -6,12 +6,12 @@ import { toast } from 'react-toastify';
 import Hashids from 'hashids';
 
 // Redux
-import { 
-  fetchProperties, 
+import {
+  fetchProperties,
   deleteProperty,
   exportProperties,
-  selectProperties, 
-  selectPropertiesLoading, 
+  selectProperties,
+  selectPropertiesLoading,
   selectPropertiesError,
   selectPropertiesPagination,
   selectDeletePropertyLoading,
@@ -58,7 +58,7 @@ export default function Properties() {
   const exportError = useSelector(selectExportPropertyError);
   const agents = useSelector(selectUsers);
   const agentsLoading = useSelector(selectUsersLoading);
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInputValue, setSearchInputValue] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -67,11 +67,11 @@ export default function Properties() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [exportFilters, setExportFilters] = useState({ property: '', city: '', p_type: 'all', ag_code: ''});
+  const [exportFilters, setExportFilters] = useState({ property: '', city: '', p_type: 'all', ag_code: '' });
   const [exportFormat, setExportFormat] = useState('csv');
-  const [exportData, setExportData] = useState({ properties: [], cities: [], agentCodes: []});
+  const [exportData, setExportData] = useState({ properties: [], cities: [], agentCodes: [] });
   const [exportDataLoading, setExportDataLoading] = useState(false);
-  const [localPagination, setLocalPagination] = useState({ currentPage: 1, perPage: 9, total: 0, totalPages: 0, hasNextPage: false, hasPrevPage: false});
+  const [localPagination, setLocalPagination] = useState({ currentPage: 1, perPage: 9, total: 0, totalPages: 0, hasNextPage: false, hasPrevPage: false });
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
@@ -138,7 +138,7 @@ export default function Properties() {
           value: agent.user_code,
           label: `${agent.user_code} - ${agent.name}`
         }));
-      
+
       if (agentCodes.length === 0 && agents.length > 0) {
         const allUserCodes = agents.map(user => ({
           value: user.user_code,
@@ -150,7 +150,7 @@ export default function Properties() {
         }));
         return;
       }
-      
+
       setExportData(prev => ({
         ...prev,
         agentCodes: [{ value: '', label: 'All Agents' }, ...agentCodes]
@@ -161,16 +161,16 @@ export default function Properties() {
   const fetchExportData = async () => {
     setExportDataLoading(true);
     let allAgents = [];
-    
+
     try {
-      let allProperties = properties;      
+      let allProperties = properties;
       if (allProperties.length === 0) {
-        const result = await dispatch(fetchProperties({page: 1,perPage: 1000,search: '',type: 'all'})).unwrap();
+        const result = await dispatch(fetchProperties({ page: 1, perPage: 1000, search: '', type: 'all' })).unwrap();
         allProperties = result.properties || [];
       }
       const agentsResult = await dispatch(fetchAgentsForCurrentUser({ page: currentPage, limit: perPage, search: searchQuery })).unwrap();
       allAgents = agentsResult.users || agents || [];
-      
+
       const cities = [...new Set(allProperties.map(p => p.city).filter(Boolean))];
       const agentCodes = allAgents
         .filter(agent => {
@@ -181,7 +181,7 @@ export default function Properties() {
           value: agent.user_code,
           label: `${agent.user_code} - ${agent.name}`
         }));
-            
+
       if (agentCodes.length === 0 && allAgents.length > 0) {
         const allUserCodes = allAgents.map(user => ({
           value: user.user_code,
@@ -193,12 +193,12 @@ export default function Properties() {
         }));
         return;
       }
-      
+
       const propertiesList = allProperties.map(p => ({
         value: p.property_code,
         label: `${p.property_code} - ${p.property_name}`
       }));
-      
+
       setExportData({
         properties: [{ value: '', label: 'All Properties' }, ...propertiesList],
         cities: [{ value: '', label: 'All Cities' }, ...cities.map(city => ({ value: city, label: city }))],
@@ -290,20 +290,20 @@ export default function Properties() {
 
   const handleExport = async () => {
     try {
-      const apiFilters = { ...exportFilters };      
+      const apiFilters = { ...exportFilters };
       if (exportFilters.property && exportFilters.property !== '') {
         apiFilters.property_code = exportFilters.property;
-      }      
+      }
       delete apiFilters.property;
       await dispatch(exportProperties({ format: exportFormat, filters: apiFilters })).unwrap();
       toast.success(`Properties exported successfully as ${exportFormat.toUpperCase()}`);
       setShowExportModal(false);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleExportCancel = () => {
     setShowExportModal(false);
-    setExportFilters({ property: '', city: '', p_type: 'all', ag_code: ''});
+    setExportFilters({ property: '', city: '', p_type: 'all', ag_code: '' });
     setExportFormat('csv');
   };
 
@@ -421,9 +421,9 @@ export default function Properties() {
             </div>
             <div className="flex items-center gap-3">
               <CheckPermission permission="property-export">
-                <Button 
-                  variant="outline" 
-                  icon={ArrowDownTrayIcon} 
+                <Button
+                  variant="outline"
+                  icon={ArrowDownTrayIcon}
                   size="sm"
                   onClick={() => {
                     setShowExportModal(true);
@@ -435,9 +435,9 @@ export default function Properties() {
                 </Button>
               </CheckPermission>
               <CheckPermission permission="property-create">
-                <Button 
-                  variant="primary" 
-                  icon={PlusIcon} 
+                <Button
+                  variant="primary"
+                  icon={PlusIcon}
                   size="sm"
                   iconSize="h-5 w-5 sm:h-6 sm:w-6"
                   onClick={() => router.push('/properties/create')}
@@ -530,19 +530,19 @@ export default function Properties() {
                                 <span className="text-xs font-medium">{property.property_type}</span>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-2 text-gray-600">
                               <MapPinIcon className="h-4 w-4 flex-shrink-0" />
                               <p className="text-sm leading-relaxed">{property.city}</p>
                             </div>
-                            
+
                             <div className="flex items-center gap-2">
                               <CurrencyDollarIcon className="h-5 w-5 text-success-600" />
                               <p className="text-xl font-bold text-success-600">
                                 ₹{parseFloat(property.full_deal_amount).toLocaleString()}
                               </p>
                             </div>
-                            
+
                             <div className="flex items-center justify-between text-sm text-gray-500">
                               <div className="flex items-center gap-4">
                                 <span className="flex items-center gap-1">
@@ -573,9 +573,9 @@ export default function Properties() {
                               </Button>
                             </CheckPermission>
                             <CheckPermission permission="property-edit">
-                              <Button 
-                                variant="primary" 
-                                className="flex-1" 
+                              <Button
+                                variant="primary"
+                                className="flex-1"
                                 size="sm"
                                 onClick={() => router.push(`/properties/edit/${hashids.encode(property.id)}`)}
                               >
@@ -655,7 +655,7 @@ export default function Properties() {
                                 </p>
                               </div>
                             </div>
-                            
+
                             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
                               <span className="flex items-center gap-1">
                                 <BuildingOfficeIcon className="h-4 w-4" />
@@ -684,8 +684,8 @@ export default function Properties() {
                                 </Button>
                               </CheckPermission>
                               <CheckPermission permission="property-edit">
-                                <Button 
-                                  variant="primary" 
+                                <Button
+                                  variant="primary"
                                   size="sm"
                                   onClick={() => router.push(`/properties/edit/${hashids.encode(property.id)}`)}
                                 >
@@ -740,18 +740,18 @@ export default function Properties() {
                     </Button>
                   </div>
                 ) : (
-                  
+
                   <CheckPermission permission="property-create">
                     <div className="mt-6">
-                        <Button 
-                          variant="primary" 
-                          icon={PlusIcon}
-                          size="sm"
-                          iconSize="h-5 w-5 sm:h-6 sm:w-6"
-                          onClick={() => router.push('/properties/create')}
-                        >
-                          Add Property
-                        </Button>
+                      <Button
+                        variant="primary"
+                        icon={PlusIcon}
+                        size="sm"
+                        iconSize="h-5 w-5 sm:h-6 sm:w-6"
+                        onClick={() => router.push('/properties/create')}
+                      >
+                        Add Property
+                      </Button>
                     </div>
                   </CheckPermission>
                 )}

@@ -83,10 +83,7 @@ export default function Dashboard() {
 
   useEffect(() => { dispatch(fetchDashboardData()); }, [dispatch]);
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch(clearError());
-    }
+    if (error) { toast.error(error); dispatch(clearError()); }
   }, [error, dispatch]);
 
   const summaryData = useMemo(() => [

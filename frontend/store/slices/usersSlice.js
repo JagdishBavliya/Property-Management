@@ -138,6 +138,22 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
+export const getUser = createAsyncThunk(
+  'users/getUser',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/api/users/${id}`);
+      return {
+        user: response.data.user || [],
+        roles: response.data.roles || [],
+        permissions: response.data.permissions || [],
+      };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch users');
+    }
+  }
+);
+
 // Delete agent and all related data by agent_code
 export const deleteAgentByAgentCode = createAsyncThunk(
   'users/deleteAgentByAgentCode',
@@ -251,6 +267,10 @@ const initialState = {
   createLoading: false,
   updateLoading: false,
   deleteLoading: false,
+  // Detail view state
+  user: null,
+  roles: [],
+  permissions: [],
 };
 
 const usersSlice = createSlice({
@@ -283,6 +303,11 @@ const usersSlice = createSlice({
         state.pagination = action.payload.pagination;
         state.error = null;
       })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch All Users
       .addCase(fetchAllUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -297,7 +322,22 @@ const usersSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(fetchUsers.rejected, (state, action) => {
+      // Get User
+      .addCase(getUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.user = null;
+        state.roles = [];
+        state.permissions = [];
+      })
+      .addCase(getUser.fulfilled, (state, action) => {  
+        state.loading = false;
+        state.user = action.payload.user;
+        state.roles = action.payload.roles;
+        state.permissions = action.payload.permissions;
+        state.error = null;
+      }) 
+      .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -450,3 +490,6 @@ export const selectDeleteUserLoading = (state) => state.users.deleteLoading;
 export const selectCreateUserError = (state) => state.users.createError;
 export const selectUpdateUserError = (state) => state.users.updateError;
 export const selectDeleteUserError = (state) => state.users.deleteError;
+export const selectUser = (state) => state.users.user;
+export const selectUserLoading = (state) => state.users.loading;
+export const selectUserError = (state) => state.users.error;
